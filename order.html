@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Now | Smart Garment Factory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles (Consistent with main page) */
+        :root {
+            --primary-color: #6a5acd;
+            --primary-light: #b19cd9;
+            --secondary-color: #9370db;
+            --accent-color: #483d8b;
+            --text-color: #333;
+            --text-light: #666;
+            --bg-color: #f9f9f9;
+            --card-bg: #fff;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+            --border-radius: 12px;
+            --error-color: #e63946;
+            --success-color: #2a9d8f;
+        }
+
+        /* Dark mode variables */
+        .dark-theme {
+            --text-color: #f0f0f0;
+            --text-light: #b0b0b0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Navigation */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            gap: 0.5rem;
+        }
+
+        .logo a {
+            text-decoration: none;
+            position: static;
+        }
+
+        .logo a::after {
+            display: none !important;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-links li a {
+            position: relative;
+            font-weight: 500;
+            color: var(--text-color);
+            padding: 0.5rem 0;
+            transition: var(--transition);
+            text-decoration: none !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+        }
+
+        .nav-links li a::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        .nav-links li a:hover::after,
+        .nav-links li a.active::after {
+            width: 100%;
+        }
+
+        .nav-links li a.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: var(--text-color);
+            transition: var(--transition);
+            margin-left: 1.5rem;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-color);
+            transform: rotate(30deg) scale(1.1);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+        .hamburger .line {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-color);
+            margin: 5px;
+            transition: var(--transition);
+        }
+
+        /* Hero Section */
+        .order-hero {
+            padding: 120px 5% 60px;
+            text-align: center;
+            background:
+                linear-gradient(rgba(106,90,205,0.7), rgba(147,112,219,0.7)),
+                url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;
+            margin-top: 80px;
+            color: #fff;
+            border-radius: 0 0 32px 32px;
+            box-shadow: 0 8px 32px rgba(106,90,205,0.10);
+        }
+
+        .order-hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #fff;
+        }
+
+        .order-hero p {
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: var(--text-light);
+            color: #fff;
+        }
+
+        /* Order Container */
+        .order-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            padding: 2rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .order-summary {
+            flex: 1;
+            min-width: 300px;
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-title i {
+            font-size: 1.3rem;
+        }
+
+        .garment-display {
+            width: 100%;
+            height: 320px;
+            background: linear-gradient(135deg, #f9f9f9 60%, #eae6fa 100%);
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(106,90,205,0.10);
+        }
+
+        .garment-display img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(106,90,205,0.13);
+            object-fit: cover;
+            background: #fff;
+            transition: box-shadow 0.3s;
+        }
+
+        .summary-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(106, 90, 205, 0.1);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-light);
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .price-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(106, 90, 205, 0.3);
+        }
+
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .order-form {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        /* Customization Options */
+        .option-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .option-section h3 {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .option-section h3 i {
+            font-size: 1.2rem;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .option-item {
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .option-item input {
+            display: none;
+        }
+
+        .option-item label {
+            display: block;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background: var(--bg-color);
+            transition: var(--transition);
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .option-item input:checked + label {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(106, 90, 205, 0.3);
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 0.5rem;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .option-item input:checked + label .color-option {
+            border-color: white;
+            transform: scale(1.1);
+        }
+
+        .fabric-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            margin: 0 auto 0.5rem;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .option-item input:checked + label .fabric-option {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .size-option label {
+            font-weight: 600;
+            padding: 0.8rem;
+        }
+
+        /* Customer Information Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--bg-color);
+            border-radius: var(--border-radius);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.2);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .form-control.error {
+            border-color: var(--error-color);
+        }
+
+        .form-control.error + .error-message {
+            display: block;
+        }
+
+        .shipping-method {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .shipping-option {
+            flex: 1;
+        }
+
+        .shipping-option input {
+            display: none;
+        }
+
+        .shipping-option label {
+            display: block;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background: var(--bg-color);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .shipping-option input:checked + label {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(106, 90, 205, 0.3);
+        }
+
+        .shipping-option .shipping-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .shipping-option .shipping-price {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Payment Section */
+        .payment-methods {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-method {
+            flex: 1;
+        }
+
+        .payment-method input {
+            display: none;
+        }
+
+        .payment-method label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background: var(--bg-color);
+            cursor: pointer;
+            transition: var(--transition);
+            height: 100%;
+        }
+
+        .payment-method input:checked + label {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(106, 90, 205, 0.3);
+        }
+
+        .payment-method i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-method .payment-name {
+            font-weight: 600;
+        }
+
+        /* Order Notes */
+        .order-notes textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Terms Checkbox */
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .terms-checkbox input {
+            margin-top: 3px;
+        }
+
+        .terms-checkbox label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .terms-checkbox a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+
+        /* Success Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            color: var(--success-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--success-color);
+        }
+
+        .modal-message {
+            margin-bottom: 2rem;
+            color: var(--text-light);
+        }
+
+        .modal-order-id {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .modal-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(106, 90, 205, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--card-bg);
+            padding: 5rem 0 0;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+            padding: 0 5%;
+        }
+
+        .footer-about {
+            padding-right: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo i {
+            font-size: 1.8rem;
+        }
+
+        .footer-about p {
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            text-decoration: none !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer-links h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            transition: var(--transition);
+            display: inline-block;
+            text-decoration: none !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .footer-contact ul {
+            list-style: none;
+        }
+
+        .footer-contact li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .footer-contact i {
+            color: var(--primary-color);
+            margin-top: 3px;
+        }
+
+        .newsletter {
+            margin-top: 2rem;
+        }
+
+        .newsletter h5 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        .newsletter form {
+            display: flex;
+        }
+
+        .newsletter input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--bg-color);
+            border-radius: 50px 0 0 50px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        .newsletter button {
+            padding: 0 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 0 50px 50px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .newsletter button:hover {
+            opacity: 0.9;
+        }
+
+        .footer-bottom {
+            padding: 2rem 5%;
+            border-top: 1px solid rgba(106, 90, 205, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-bottom p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .legal-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .legal-links a {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            transition: var(--transition);
+            text-decoration: none !important;
+            border-bottom: none !important;
+            box-shadow: none !important;
+        }
+
+        .legal-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .order-container {
+                flex-direction: column;
+            }
+            
+            .order-summary {
+                position: static;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                background-color: var(--card-bg);
+                flex-direction: column;
+                align-items: center;
+                padding: 2rem 0;
+                transition: var(--transition);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .nav-links li {
+                margin: 1rem 0;
+            }
+
+            .hamburger.active .line:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+
+            .hamburger.active .line:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active .line:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+
+            .shipping-method,
+            .payment-methods {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .option-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .legal-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-tshirt"></i>
+            <span>Smart Garment</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="process.html">Our Process</a></li>
+            <li><a href="customize.html">Customize</a></li>
+            <li><a href="tracking.html">Track Order</a></li>
+            <li><a href="inventory.html">Inventory</a></li>
+            <li><a href="design.html">Design AI</a></li>
+            <li><a href="order.html" class="active">Order Now</a></li>
+            <li><a href="about.html">About Us</a></li>
+        </ul>
+        <div class="theme-toggle" id="themeToggle">
+            <i class="fas fa-sun"></i>
+        </div>
+        <div class="hamburger">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </nav>
+
+    <!-- Order Hero Section -->
+    <section class="order-hero" style="background:
+    linear-gradient(rgba(206, 202, 231, 0.7), rgba(112, 98, 140, 0.7)),
+    url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;">
+        <h1>Complete Your Order</h1>
+        <p>Review your custom garment and provide your shipping and payment information</p>
+    </section>
+
+    <!-- Order Container -->
+    <div class="order-container">
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h3 class="summary-title"><i class="fas fa-shopping-bag"></i> Order Summary</h3>
+            <div class="garment-display">
+                <img id="garment-image"
+                     src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80"
+                     alt="Custom Garment">
+            </div>
+            
+            <div class="summary-details">
+                <div class="detail-row">
+                    <span class="detail-label">Product:</span>
+                    <span class="detail-value" id="garment-name">Custom T-Shirt</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Color:</span>
+                    <span class="detail-value" id="garment-color">Royal Blue</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Fabric:</span>
+                    <span class="detail-value" id="garment-fabric">Organic Cotton</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Size:</span>
+                    <span class="detail-value" id="garment-size">S</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Features:</span>
+                    <span class="detail-value" id="garment-features">None</span>
+                </div>
+            </div>
+            
+            <div class="price-total">
+                <span>Total:</span>
+                <span id="price-display">$49.99</span>
+            </div>
+            
+            <button class="checkout-btn" id="checkout-btn" disabled>
+                <i class="fas fa-lock"></i> Complete Order
+            </button>
+        </div>
+
+        <!-- Order Form -->
+        <div class="order-form">
+            <form id="orderForm">
+                <!-- Customer Information -->
+                <div class="option-section">
+                    <h3><i class="fas fa-user"></i> Customer Information</h3>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" id="firstName" class="form-control" required>
+                                <div class="error-message">Please enter your first name</div>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" id="lastName" class="form-control" required>
+                                <div class="error-message">Please enter your last name</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" class="form-control" required>
+                        <div class="error-message">Please enter a valid email address</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" id="phone" class="form-control" required>
+                        <div class="error-message">Please enter a valid phone number</div>
+                    </div>
+                </div>
+                
+                <!-- Shipping Address -->
+                <div class="option-section">
+                    <h3><i class="fas fa-truck"></i> Shipping Address</h3>
+                    <div class="form-group">
+                        <label for="address" class="form-label">Street Address</label>
+                        <input type="text" id="address" class="form-control" required>
+                        <div class="error-message">Please enter your street address</div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" id="city" class="form-control" required>
+                                <div class="error-message">Please enter your city</div>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="state" class="form-label">State/Province</label>
+                                <input type="text" id="state" class="form-control" required>
+                                <div class="error-message">Please enter your state/province</div>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label for="zip" class="form-label">ZIP/Postal Code</label>
+                                <input type="text" id="zip" class="form-control" required>
+                                <div class="error-message">Please enter your ZIP/postal code</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="country" class="form-label">Country</label>
+                        <select id="country" class="form-control" required>
+                            <option value="">Select Country</option>
+                            <option value="US" selected>United States</option>
+                            <option value="CA">Canada</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="AU">Australia</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="JP">Japan</option>
+                        </select>
+                        <div class="error-message">Please select your country</div>
+                    </div>
+                </div>
+                
+                <!-- Shipping Method -->
+                <div class="option-section">
+                    <h3><i class="fas fa-shipping-fast"></i> Shipping Method</h3>
+                    <div class="shipping-method">
+                        <div class="shipping-option">
+                            <input type="radio" id="shipping-standard" name="shipping" value="Standard" checked>
+                            <label for="shipping-standard">
+                                <div class="shipping-title">Standard Shipping</div>
+                                <div class="shipping-price">$5.99 (5-7 business days)</div>
+                            </label>
+                        </div>
+                        <div class="shipping-option">
+                            <input type="radio" id="shipping-express" name="shipping" value="Express">
+                            <label for="shipping-express">
+                                <div class="shipping-title">Express Shipping</div>
+                                <div class="shipping-price">$12.99 (2-3 business days)</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Method -->
+                <div class="option-section">
+                    <h3><i class="fas fa-credit-card"></i> Payment Method</h3>
+                    <div class="payment-methods">
+                        <div class="payment-method">
+                            <input type="radio" id="payment-card" name="payment" value="Credit Card" checked>
+                            <label for="payment-card">
+                                <i class="far fa-credit-card"></i>
+                                <div class="payment-name">Credit Card</div>
+                            </label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="payment-paypal" name="payment" value="PayPal">
+                            <label for="payment-paypal">
+                                <i class="fab fa-paypal"></i>
+                                <div class="payment-name">PayPal</div>
+                            </label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="payment-apple" name="payment" value="Apple Pay">
+                            <label for="payment-apple">
+                                <i class="fab fa-apple"></i>
+                                <div class="payment-name">Apple Pay</div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Credit Card Form (shown when credit card is selected) -->
+                    <div id="cardForm">
+                        <div class="form-group">
+                            <label for="cardNumber" class="form-label">Card Number</label>
+                            <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" required>
+                            <div class="error-message">Please enter a valid card number</div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="cardExpiry" class="form-label">Expiry Date</label>
+                                    <input type="text" id="cardExpiry" class="form-control" placeholder="MM/YY" required>
+                                    <div class="error-message">Please enter a valid expiry date</div>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="cardCvc" class="form-label">CVC</label>
+                                    <input type="text" id="cardCvc" class="form-control" placeholder="123" required>
+                                    <div class="error-message">Please enter a valid CVC</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cardName" class="form-label">Name on Card</label>
+                            <input type="text" id="cardName" class="form-control" required>
+                            <div class="error-message">Please enter the name on your card</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Notes -->
+                <div class="option-section order-notes">
+                    <h3><i class="fas fa-edit"></i> Order Notes</h3>
+                    <div class="form-group">
+                        <label for="notes" class="form-label">Special Instructions (Optional)</label>
+                        <textarea id="notes" class="form-control" placeholder="Any special requests or instructions for your order..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- Terms and Conditions -->
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the <a href="terms.html">Terms and Conditions</a> and <a href="privacy.html">Privacy Policy</a></label>
+                </div>
+                
+                                  <!-- ...existing code up to the end of your form and main content... -->
+                    
+                                    <!-- Submit Button -->
+                                    <button type="submit" class="checkout-btn" id="finalCheckoutBtn">
+                                        <i class="fas fa-lock"></i> Complete Order
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    
+                        <!-- Success Modal -->
+                        <div class="modal-overlay" id="successModal">
+                            <div class="modal-content">
+                                <div class="modal-icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="modal-title">Order Placed Successfully!</div>
+                                <div class="modal-message">Thank you for your purchase. Your order has been received and is being processed.</div>
+                                <div class="modal-order-id">Order ID: <span id="orderId"></span></div>
+                                <button class="modal-btn" id="closeModalBtn">Close</button>
+                            </div>
+                        </div>
+                    
+                        <!-- Footer -->
+                        <footer class="footer">
+                            <div class="footer-grid">
+                                <div class="footer-about">
+                                    <div class="footer-logo">
+                                        <i class="fas fa-tshirt"></i>
+                                        <span>Smart Garment</span>
+                                    </div>
+                                    <p>Pioneering the future of on-demand, sustainable fashion manufacturing through technology.</p>
+                                    <div class="social-links">
+                                        <a href="#"><i class="fab fa-instagram"></i></a>
+                                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                                        <a href="#"><i class="fab fa-twitter"></i></a>
+                                        <a href="#"><i class="fab fa-youtube"></i></a>
+                                    </div>
+                                </div>
+                                <div class="footer-links">
+                                    <h4>Quick Links</h4>
+                                    <ul>
+                                        <li><a href="index.html">Home</a></li>
+                                        <li><a href="process.html">Our Process</a></li>
+                                        <li><a href="customize.html">Customize</a></li>
+                                        <li><a href="tracking.html">Track Order</a></li>
+                                        <li><a href="inventory.html">Inventory</a></li>
+                                    </ul>
+                                </div>
+                                <div class="footer-links">
+                                    <h4>Resources</h4>
+                                    <ul>
+                                        <li><a href="blog.html">Blog</a></li>
+                                        <li><a href="faq.html">FAQs</a></li>
+                                        <li><a href="sustainability.html">Sustainability</a></li>
+                                        <li><a href="careers.html">Careers</a></li>
+                                        <li><a href="press.html">Press</a></li>
+                                    </ul>
+                                </div>
+                                <div class="footer-contact">
+                                    <h4>Contact Us</h4>
+                                    <ul>
+                                       <li><i class="fas fa-map-marker-alt"></i> 123 Tech Park, Tirupur District, TN 10001</li>
+<li><i class="fas fa-phone"></i> +91 123-4567-8910</li>
+<li><i class="fas fa-envelope"></i> hello@smartgarment.com</li>
+                                    </ul>
+                                    <div class="newsletter">
+                                        <h5>Subscribe to Updates</h5>
+                                        <form>
+                                            <input type="email" placeholder="Your email address">
+                                            <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="footer-bottom">
+                                <p>&copy; 2025 Smart Garment Factory. All rights reserved.</p>
+                                <div class="legal-links">
+                                    <a href="privacy.html">Privacy Policy</a>
+                                    <a href="terms.html">Terms of Service</a>
+                                    <a href="cookies.html">Cookie Settings</a>
+                                </div>
+                            </div>
+                        </footer>
+                    
+                        <script>
+                        // Theme Toggle
+                        const themeToggleBtn = document.getElementById('themeToggle');
+                        const body = document.body;
+                        if (!localStorage.getItem('theme')) {
+                            body.classList.add('dark-theme');
+                            themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                        } else if (localStorage.getItem('theme') === 'light-theme') {
+                            body.classList.remove('dark-theme');
+                            themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                        } else {
+                            body.classList.add('dark-theme');
+                            themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                        }
+                        themeToggleBtn.addEventListener('click', () => {
+                            if (body.classList.contains('dark-theme')) {
+                                body.classList.remove('dark-theme');
+                                localStorage.setItem('theme', 'light-theme');
+                                themeToggleBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                            } else {
+                                body.classList.add('dark-theme');
+                                localStorage.setItem('theme', 'dark-theme');
+                                themeToggleBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                            }
+                        });
+                    
+                        // Hamburger menu for mobile
+                        const hamburger = document.querySelector('.hamburger');
+                        const navLinks = document.querySelector('.nav-links');
+                        hamburger.addEventListener('click', () => {
+                            navLinks.classList.toggle('active');
+                            hamburger.classList.toggle('active');
+                        });
+                    
+                        // Newsletter form (demo only)
+                        document.querySelectorAll('.newsletter form').forEach(form => {
+                            form.addEventListener('submit', function(e) {
+                                e.preventDefault();
+                                alert('Thank you for subscribing!');
+                                form.reset();
+                            });
+                        });
+                    
+                        // Payment method toggle
+                        const paymentRadios = document.querySelectorAll('input[name="payment"]');
+                        const cardForm = document.getElementById('cardForm');
+                        paymentRadios.forEach(radio => {
+                            radio.addEventListener('change', function() {
+                                if (this.value === 'Credit Card') {
+                                    cardForm.style.display = '';
+                                } else {
+                                    cardForm.style.display = 'none';
+                                }
+                            });
+                        });
+                        // Hide card form if not selected on load
+                        if (![...paymentRadios].find(r => r.checked && r.value === 'Credit Card')) {
+                            cardForm.style.display = 'none';
+                        }
+                    
+                        // Form validation and modal
+                        const orderForm = document.getElementById('orderForm');
+                        const checkoutBtn = document.getElementById('finalCheckoutBtn');
+                        const termsCheckbox = document.getElementById('terms');
+                        const successModal = document.getElementById('successModal');
+                        const closeModalBtn = document.getElementById('closeModalBtn');
+                        const orderIdSpan = document.getElementById('orderId');
+                    
+                        // Enable checkout button only if terms are checked
+                        termsCheckbox.addEventListener('change', function() {
+                            checkoutBtn.disabled = !this.checked;
+                        });
+                    
+                        // Simple validation and modal demo
+                        orderForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            let valid = true;
+                            orderForm.querySelectorAll('.form-control[required]').forEach(input => {
+                                if (!input.value.trim()) {
+                                    input.classList.add('error');
+                                    input.nextElementSibling.style.display = 'block';
+                                    valid = false;
+                                } else {
+                                    input.classList.remove('error');
+                                    input.nextElementSibling.style.display = 'none';
+                                }
+                            });
+                            if (!termsCheckbox.checked) {
+                                valid = false;
+                            }
+                            if (valid) {
+                                // Generate a fake order ID
+                                orderIdSpan.textContent = 'SGF' + Math.floor(Math.random() * 900000 + 100000);
+                                successModal.classList.add('active');
+                            }
+                        });
+                    
+                        closeModalBtn.addEventListener('click', function() {
+                            successModal.classList.remove('active');
+                            orderForm.reset();
+                            checkoutBtn.disabled = true;
+                        });
+                    
+                        // Close modal on outside click
+                        successModal.addEventListener('click', function(e) {
+                            if (e.target === successModal) {
+                                successModal.classList.remove('active');
+                                orderForm.reset();
+                                checkoutBtn.disabled = true;
+                            }
+                        });
+                        </script>
+                    </body>
+                    </html>

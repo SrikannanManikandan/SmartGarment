@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracking - Smart Garment Factory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        /* Base Styles (same as index.html) */
+        :root {
+            --primary-color: #6a5acd;
+            --primary-light: #b19cd9;
+            --secondary-color: #9370db;
+            --accent-color: #483d8b;
+            --text-color: #333;
+            --text-light: #666;
+            --bg-color: #f9f9f9;
+            --card-bg: #fff;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+            --border-radius: 12px;
+        }
+
+        .dark-theme {
+            --primary-color: #9370db;
+            --primary-light: #6a5acd;
+            --secondary-color: #b19cd9;
+            --accent-color: #b19cd9;
+            --text-color: #f0f0f0;
+            --text-light: #c0c0c0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+        }
+
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Navigation (same as index.html) */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            gap: 0.5rem;
+            z-index: 1001;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links li a {
+            position: relative;
+            font-weight: 500;
+            color: var(--text-color);
+            padding: 0.5rem 0;
+            transition: var(--transition);
+        }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links li a:hover::after,
+        .nav-links li a.active::after {
+            width: 100%;
+        }
+
+        .nav-links li a.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .auth-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-greeting {
+            margin-right: 1rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: var(--text-color);
+            transition: var(--transition);
+            margin-left: 1.5rem;
+            z-index: 1001;
+        }
+
+        .theme-toggle:hover {
+            color: var(--primary-color);
+            transform: rotate(30deg) scale(1.1);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger .line {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-color);
+            margin: 5px;
+            transition: var(--transition);
+        }
+
+        /* Tracking Page Specific Styles */
+        .tracking-header {
+            padding: 120px 5% 60px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(106, 90, 205, 0.1), transparent);
+        }
+
+        .tracking-header h1 {
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tracking-header p {
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            border-radius: 50px;
+            border: 2px solid var(--primary-light);
+            font-size: 1.1rem;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(106, 90, 205, 0.2);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 4px;
+            top: 3px;
+            padding: 1.1rem 1.8rem;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Order Tracking Section */
+        .tracking-section {
+            padding: 60px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .order-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .order-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .order-status {
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-processing {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .status-shipped {
+            background-color: rgba(13, 110, 253, 0.2);
+            color: #0d6efd;
+        }
+
+        .status-delivered {
+            background-color: rgba(25, 135, 84, 0.2);
+            color: #198754;
+        }
+
+        .status-cancelled {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 0.2rem;
+            display: block;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        /* Timeline */
+        .timeline-container {
+            margin-top: 2rem;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--primary-light);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -30px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            border: 3px solid var(--card-bg);
+        }
+
+        .timeline-date {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            background-color: rgba(106, 90, 205, 0.05);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+        }
+
+        .timeline-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .timeline-content p {
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+
+        .current .timeline-dot {
+            background-color: var(--secondary-color);
+            box-shadow: 0 0 0 4px rgba(106, 90, 205, 0.2);
+        }
+
+        .current .timeline-content {
+            background-color: rgba(106, 90, 205, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        /* Order Preview */
+        .order-preview {
+            margin-top: 2rem;
+        }
+
+        .preview-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .preview-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(106, 90, 205, 0.1);
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .preview-image {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--border-radius);
+            background-color: #f5f5f5;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .preview-details {
+            flex: 1;
+        }
+
+        .preview-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-attributes {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .attribute {
+            font-size: 0.85rem;
+            padding: 0.2rem 0.5rem;
+            background-color: rgba(106, 90, 205, 0.1);
+            border-radius: 4px;
+            color: var(--primary-color);
+        }
+
+        .preview-price {
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        /* 3D Preview */
+        .preview-3d {
+            margin-top: 2rem;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            height: 400px;
+            background-color: #f5f5f5;
+            position: relative;
+        }
+
+        .preview-3d iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .preview-3d-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent 30%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+            color: white;
+            pointer-events: none;
+        }
+
+        .preview-3d-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .preview-3d-desc {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            max-width: 500px;
+        }
+
+        /* Action Buttons */
+        .order-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* No Orders State */
+        .no-orders {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .no-orders-icon {
+            font-size: 4rem;
+            color: var(--primary-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .no-orders h3 {
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background-color: var(--card-bg);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: var(--transition);
+            }
+            
+            .nav-links.active {
+                left: 0;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .order-status {
+                margin-top: 0.5rem;
+            }
+            
+            .preview-item {
+                flex-direction: column;
+            }
+            
+            .preview-image {
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        /* Footer (same as index.html) */
+        .footer {
+            background-color: var(--bg-light);
+            padding: 5rem 0 0;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-about {
+            padding-right: 2rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo i {
+            font-size: 1.8rem;
+        }
+
+        .footer-about p {
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer-links h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            transition: var(--transition);
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .footer-contact ul {
+            list-style: none;
+        }
+
+        .footer-contact li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .footer-contact i {
+            color: var(--primary-color);
+            margin-top: 3px;
+        }
+
+        .newsletter {
+            margin-top: 2rem;
+        }
+
+        .newsletter h5 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .newsletter form {
+            display: flex;
+        }
+
+        .newsletter input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 50px 0 0 50px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .newsletter button {
+            padding: 0 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 0 50px 50px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .newsletter button:hover {
+            opacity: 0.9;
+        }
+
+        .footer-bottom {
+            padding: 2rem 0;
+            border-top: 1px solid rgba(106, 90, 205, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-bottom p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .legal-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .legal-links a {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        .legal-links a:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-tshirt"></i>
+            <span>Smart Garment</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="process.html">Our Process</a></li>
+            <li><a href="customize.html">Customize</a></li>
+            <li><a href="tracking.html" class="active">Track Order</a></li>
+            <li><a href="inventory.html">Inventory</a></li>
+            <li><a href="design.html">Design AI</a></li>
+            <li><a href="order.html">Order Now</a></li>
+            <li><a href="about.html">About Us</a></li>
+        </ul>
+        
+        <div class="auth-container">
+            <div class="user-greeting"></div>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-primary">Login</a>
+                <a href="register.html" class="btn btn-secondary">Register</a>
+            </div>
+        </div>
+        
+        <div class="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </div>
+        <div class="hamburger">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </nav>
+
+    <!-- Tracking Header -->
+    <header class="tracking-header">
+        <h1>Track Your Order</h1>
+        <p>Monitor your custom garment's journey from design to delivery with our real-time tracking system. Get live updates, 3D previews, and production insights.</p>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Enter your order number or tracking ID...">
+            <button class="search-btn">
+                <i class="fas fa-search"></i> Track
+            </button>
+        </div>
+    </header>
+
+    <!-- Tracking Section -->
+    <section class="tracking-section">
+        <!-- Order Card 1 -->
+        <div class="order-card">
+            <div class="order-header">
+                <h2 class="order-title">Custom Tailored Suit - #SG-2023-0456</h2>
+                <span class="order-status status-shipped">Shipped</span>
+            </div>
+            
+            <div class="order-details">
+                <div class="detail-item">
+                    <span class="detail-label">Order Date</span>
+                    <span class="detail-value">October 15, 2023</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Estimated Delivery</span>
+                    <span class="detail-value">October 28, 2023</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Customer</span>
+                    <span class="detail-value">John Smith</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Total Amount</span>
+                    <span class="detail-value">$349.99</span>
+                </div>
+            </div>
+            
+            <!-- Timeline -->
+            <div class="timeline-container">
+                <h3 class="timeline-title">Production Journey</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Oct 15, 10:30 AM</div>
+                        <div class="timeline-content">
+                            <h4>Order Confirmed</h4>
+                            <p>Your order has been received and confirmed. Design specifications are being reviewed.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Oct 16, 2:15 PM</div>
+                        <div class="timeline-content">
+                            <h4>Material Sourced</h4>
+                            <p>Premium Italian wool fabric has been selected from our sustainable suppliers.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Oct 17, 9:45 AM</div>
+                        <div class="timeline-content">
+                            <h4>Cutting Process</h4>
+                            <p>AI-guided laser cutting completed with 0.1mm precision.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item current">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Oct 18, 11:20 AM</div>
+                        <div class="timeline-content">
+                            <h4>In Transit</h4>
+                            <p>Your order has been shipped via FedEx. Expected delivery in 3 business days.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Oct 28 (Estimated)</div>
+                        <div class="timeline-content">
+                            <h4>Delivery</h4>
+                            <p>Your order will be delivered to your address.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Preview -->
+            <div class="order-preview">
+                <h3 class="preview-title">Your Custom Design</h3>
+                
+                <div class="preview-item">
+                    <div class="preview-image" style="background-image: url('https://images.unsplash.com/photo-1591047139829-d91aecb6caea')"></div>
+                    <div class="preview-details">
+                        <h4 class="preview-name">Custom Tailored Suit</h4>
+                        <div class="preview-attributes">
+                            <span class="attribute">Navy Blue</span>
+                            <span class="attribute">Italian Wool</span>
+                            <span class="attribute">Size: 42R</span>
+                        </div>
+                        <p>Premium two-piece suit with notch lapel, double vents, and custom monogram.</p>
+                        <div class="preview-price">$349.99</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 3D Preview -->
+            <div class="order-preview">
+                <h3 class="preview-title">3D Digital Twin</h3>
+                <div class="preview-3d">
+                    <!-- This would be replaced with an actual 3D viewer iframe/embed -->
+                    <div style="background-color: #eee; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center;">
+                            <i class="fas fa-tshirt" style="font-size: 3rem; color: #6a5acd; margin-bottom: 1rem;"></i>
+                            <p>Interactive 3D Preview</p>
+                        </div>
+                    </div>
+                    <div class="preview-3d-overlay">
+                        <h3 class="preview-3d-title">Your Custom Suit</h3>
+                        <p class="preview-3d-desc">Rotate, zoom, and inspect your garment from all angles before it arrives.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="order-actions">
+                <button class="btn btn-primary">
+                    <i class="fas fa-map-marker-alt"></i> Track Shipment
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-undo"></i> Reorder
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-headset"></i> Support
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-print"></i> Invoice
+                </button>
+            </div>
+        </div>
+        
+        <!-- Order Card 2 -->
+        <div class="order-card">
+            <div class="order-header">
+                <h2 class="order-title">Personalized Denim Jacket - #SG-2023-0382</h2>
+                <span class="order-status status-delivered">Delivered</span>
+            </div>
+            
+            <div class="order-details">
+                <div class="detail-item">
+                    <span class="detail-label">Order Date</span>
+                    <span class="detail-value">September 28, 2023</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Delivered On</span>
+                    <span class="detail-value">October 10, 2023</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Customer</span>
+                    <span class="detail-value">John Smith</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Total Amount</span>
+                    <span class="detail-value">$129.99</span>
+                </div>
+            </div>
+            
+            <!-- Timeline -->
+            <div class="timeline-container">
+                <h3 class="timeline-title">Production Journey</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Sep 28, 3:45 PM</div>
+                        <div class="timeline-content">
+                            <h4>Order Confirmed</h4>
+                            <p>Your order has been received and confirmed.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Sep 30, 10:15 AM</div>
+                        <div class="timeline-content">
+                            <h4>Design Approved</h4>
+                            <p>Your custom embroidery design has been approved.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Oct 2, 1:30 PM</div>
+                        <div class="timeline-content">
+                            <h4>Production Started</h4>
+                            <p>Jacket is being assembled with your custom embroidery.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Oct 5, 4:20 PM</div>
+                        <div class="timeline-content">
+                            <h4>Quality Check</h4>
+                            <p>Your jacket passed our 12-point quality inspection.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Oct 7, 9:10 AM</div>
+                        <div class="timeline-content">
+                            <h4>Shipped</h4>
+                            <p>Your order has been shipped via UPS.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-date">Oct 10, 2:45 PM</div>
+                        <div class="timeline-content">
+                            <h4>Delivered</h4>
+                            <p>Your order was delivered to your address.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Preview -->
+            <div class="order-preview">
+                <h3 class="preview-title">Your Custom Design</h3>
+                
+                <div class="preview-item">
+                    <div class="preview-image" style="background-image: url('https://images.unsplash.com/photo-1591047139829-d91aecb6caea')"></div>
+                    <div class="preview-details">
+                        <h4 class="preview-name">Personalized Denim Jacket</h4>
+                        <div class="preview-attributes">
+                            <span class="attribute">Light Wash</span>
+                            <span class="attribute">Organic Cotton</span>
+                            <span class="attribute">Size: M</span>
+                            <span class="attribute">Custom Embroidery</span>
+                        </div>
+                        <p>Classic denim jacket with custom "Smith" embroidery on back and left chest.</p>
+                        <div class="preview-price">$129.99</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="order-actions">
+                <button class="btn btn-primary">
+                    <i class="fas fa-star"></i> Leave Review
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-undo"></i> Reorder
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-headset"></i> Support
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-print"></i> Invoice
+                </button>
+            </div>
+        </div>
+        <!-- End of Order Card 2 -->
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-about">
+                <div class="footer-logo">
+                    <i class="fas fa-tshirt"></i>
+                    <span>Smart Garment</span>
+                </div>
+                <p>Pioneering the future of on-demand, sustainable fashion manufacturing through technology.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="process.html">Our Process</a></li>
+                    <li><a href="customize.html">Customize</a></li>
+                    <li><a href="tracking.html">Track Order</a></li>
+                    <li><a href="inventory.html">Inventory</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="faq.html">FAQs</a></li>
+                    <li><a href="sustainability.html">Sustainability</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="press.html">Press</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Tech Park, Fashion District, NY 10001</li>
+                    <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                    <li><i class="fas fa-envelope"></i> hello@smartgarment.com</li>
+                </ul>
+                <div class="newsletter">
+                    <h5>Subscribe to Updates</h5>
+                    <form>
+                        <input type="email" placeholder="Your email address">
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Smart Garment Factory. All rights reserved.</p>
+            <div class="legal-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="cookies.html">Cookie Settings</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Theme Toggle
+    const themeToggle = document.querySelector('.theme-toggle');
+    const body = document.body;
+    // Set dark as default
+    if (!localStorage.getItem('theme')) {
+        body.classList.add('dark-theme');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    } else if (localStorage.getItem('theme') === 'light-theme') {
+        body.classList.remove('dark-theme');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    } else {
+        body.classList.add('dark-theme');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+    themeToggle.addEventListener('click', () => {
+        if (body.classList.contains('dark-theme')) {
+            body.classList.remove('dark-theme');
+            localStorage.setItem('theme', 'light-theme');
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        } else {
+            body.classList.add('dark-theme');
+            localStorage.setItem('theme', 'dark-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    });
+
+    // Hamburger menu for mobile
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+
+    // Newsletter form (demo only)
+    document.querySelectorAll('.newsletter form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for subscribing!');
+            form.reset();
+        });
+    });
+
+    // Demo: Search tracking (shows alert)
+    document.querySelector('.search-btn').addEventListener('click', function() {
+        const val = document.querySelector('.search-input').value.trim();
+        if (val) {
+            alert('Tracking for: ' + val + '\n(This is a demo. Real tracking would show results here.)');
+        } else {
+            alert('Please enter your order number or tracking ID.');
+        }
+    });
+
+    // Demo: Action buttons
+    document.querySelectorAll('.order-actions .btn-primary, .order-actions .btn-secondary').forEach(btn => {
+        btn.addEventListener('click', function() {
+            alert('This is a demo action: ' + btn.textContent.trim());
+        });
+    });
+    </script>
+</body>
+</html>
